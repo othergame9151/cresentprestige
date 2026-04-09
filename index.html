@@ -307,9 +307,9 @@
     .hero-over{
       position:absolute;inset:0;
       background:linear-gradient(to bottom,
-        rgba(10,10,10,.85) 0%,
-        rgba(10,10,10,.72) 38%,
-        rgba(10,10,10,.90) 70%,
+        rgba(10,10,10,.88) 0%,
+        rgba(10,10,10,.80) 38%,
+        rgba(10,10,10,.92) 70%,
         rgba(10,10,10,.97) 100%);
     }
     .hero-over::after{
@@ -677,6 +677,7 @@
 
     /* ── ≤640px ── */
     @media(max-width:640px){
+      .scroll-cue{display:none;}
       .hero-sub{display:none;}
       .con-left>p{font-size:.85rem;line-height:1.7;}
       .trust-item{
