@@ -711,6 +711,8 @@
       .trust-item:nth-child(4){border-bottom:none;}
     }
   </style>
+  <!-- Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -963,18 +965,18 @@
       </article>
 
       <!-- 7 ─────────────────────────────────
-           IMAGE: /assets/images/service-transmission.jpg
-           800×600 (4:3). Gearbox on workbench or under-vehicle
-           transmission shot. Technical workshop atmosphere. -->
+           IMAGE: /assets/images/service-fluids.jpg
+           800×600 (4:3). Oil bottle, transmission fluid, or
+           fluid pouring into a funnel. Clean, technical. -->
       <article class="svc-card r d7">
         <div class="svc-img img-slot">
-          <img src="./assets/images/service-transmission.jpg"
-            alt="Transmission servicing and repairs at Crescent Prestige Autohaus Homebush"
+          <img src="./assets/images/service-fluids.jpg"
+            alt="Fluid changes and maintenance at Crescent Prestige Autohaus Homebush"
             width="800" height="600" loading="lazy" />
         </div>
         <div class="svc-body">
-          <h3>Transmission Servicing and Repairs</h3>
-          <p>Manual, automatic, and dual-clutch transmissions all receive the specialist care they require. Regular servicing extends life; catching issues early prevents costly failures further down the track.</p>
+          <h3>Fluid Changes &amp; Maintenance</h3>
+          <p>Oil, coolant, transmission fluid, brake fluid, and power steering—regular fluid changes are essential to engine longevity and performance. We use manufacturer-approved fluids and complete changes thoroughly every time.</p>
           <a href="#contact" class="btn btn-ghost">Enquire Now</a>
         </div>
       </article>
@@ -1326,19 +1328,11 @@
           class="enq-form"
           name="contact"
           method="POST"
-          data-netlify="true"
-          data-netlify-honeypot="bot-field"
+          action="https://formsubmit.co/jppj95693@gmail.com"
           id="cForm"
           novalidate
           aria-label="Enquiry form"
         >
-          <!-- Netlify required hidden field -->
-          <input type="hidden" name="form-name" value="contact" />
-
-          <!-- Honeypot — hidden from humans, catches spam bots -->
-          <p class="hp" aria-hidden="true">
-            <label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
-          </p>
 
           <div class="f-row">
             <div class="f-grp">
@@ -1368,6 +1362,10 @@
             <label for="f-msg">Message <span aria-hidden="true" style="color:var(--gold-dim)">*</span></label>
             <textarea id="f-msg" name="message" placeholder="Tell us how we can help &mdash; describe your vehicle, the issue, or the service you need." required aria-required="true" aria-describedby="e-msg"></textarea>
             <span class="f-err" id="e-msg" role="alert">Please enter a message.</span>
+          </div>
+
+          <div class="f-grp" style="margin-top: 20px;">
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAAC_ukqrirULQzMRi" data-theme="dark"></div>
           </div>
 
           <div class="f-sub">
@@ -1407,7 +1405,7 @@
           <li><a href="#services">Diagnostics &amp; Fault Finding</a></li>
           <li><a href="#services">Brakes &amp; Suspension</a></li>
           <li><a href="#services">Engine Repairs</a></li>
-          <li><a href="#services">Transmission</a></li>
+          <li><a href="#services">Fluid Changes &amp; Maintenance</a></li>
           <li><a href="#services">Pre-Purchase Inspections</a></li>
         </ul>
       </div>
@@ -1434,7 +1432,7 @@
     </div>
 
     <div class="foot-seo">
-      <p>Crescent Prestige Autohaus is a European car mechanic and automotive workshop at 15 The Crescent, Homebush NSW 2140, serving Homebush, Strathfield, Burwood, Concord, Auburn, Rhodes and the Parramatta Road corridor. We specialise in BMW, Mercedes-Benz, Audi, Porsche, Volkswagen, Volvo and Alfa Romeo, offering logbook servicing, diagnostics, engine repairs, brakes, suspension, transmission servicing and pre-purchase inspections. All makes and models welcome. Call (02) 9746 6533 to book.</p>
+      <p>Crescent Prestige Autohaus is a European car mechanic and automotive workshop at 15 The Crescent, Homebush NSW 2140. <em>The legacy of Peter Hallworth Motors</em>, we serve Homebush, Strathfield, Burwood, Concord, Auburn, Rhodes and the Parramatta Road corridor. We specialise in BMW, Mercedes-Benz, Audi, Porsche, Volkswagen, Volvo and Alfa Romeo, offering logbook servicing, diagnostics, engine repairs, brakes, suspension, fluid changes and pre-purchase inspections. All makes and models welcome. Call (02) 9746 6533 to book.</p>
     </div>
 
     <div class="foot-btm">
@@ -1555,21 +1553,7 @@
   form.addEventListener('submit',function(e){
     e.preventDefault();
     if(!validate())return;
-    var data=new FormData(form);
-    fetch('/',{
-      method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body:new URLSearchParams(data).toString()
-    })
-    .then(function(res){
-      if(res.ok||res.redirected){
-        form.style.opacity='0';
-        form.style.pointerEvents='none';
-        ok.classList.add('show');
-        ok.scrollIntoView({behavior:'smooth',block:'center'});
-      }else{form.submit();}
-    })
-    .catch(function(){form.submit();});
+    form.submit();
   });
 }());
 </script>
