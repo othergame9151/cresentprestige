@@ -1322,62 +1322,16 @@
       </div>
 
       <div class="r d2">
-        <form
-          class="enq-form"
-          name="contact"
-          method="POST"
-          data-netlify="true"
-          data-netlify-honeypot="bot-field"
-          id="cForm"
-          novalidate
-          aria-label="Enquiry form"
-        >
-          <!-- Netlify required hidden field -->
-          <input type="hidden" name="form-name" value="contact" />
-
-          <!-- Honeypot — hidden from humans, catches spam bots -->
-          <p class="hp" aria-hidden="true">
-            <label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+        <form name="contact" netlify>
+          <p>
+            <label>Name <input type="text" name="name" /></label>
           </p>
-
-          <div class="f-row">
-            <div class="f-grp">
-              <label for="f-name">Full Name <span aria-hidden="true" style="color:var(--gold-dim)">*</span></label>
-              <input type="text" id="f-name" name="name" placeholder="Your name" required autocomplete="name" aria-required="true" aria-describedby="e-name" />
-              <span class="f-err" id="e-name" role="alert">Please enter your name.</span>
-            </div>
-            <div class="f-grp">
-              <label for="f-phone">Phone <span aria-hidden="true" style="color:var(--gold-dim)">*</span></label>
-              <input type="tel" id="f-phone" name="phone" placeholder="Your phone number" required autocomplete="tel" aria-required="true" aria-describedby="e-phone" />
-              <span class="f-err" id="e-phone" role="alert">Please enter your phone number.</span>
-            </div>
-          </div>
-
-          <div class="f-grp">
-            <label for="f-email">Email Address <span aria-hidden="true" style="color:var(--gold-dim)">*</span></label>
-            <input type="email" id="f-email" name="email" placeholder="your@email.com" required autocomplete="email" aria-required="true" aria-describedby="e-email" />
-            <span class="f-err" id="e-email" role="alert">Please enter a valid email address.</span>
-          </div>
-
-          <div class="f-grp">
-            <label for="f-vehicle">Vehicle Make &amp; Model <span style="color:var(--t-muted);font-weight:300;letter-spacing:0;">(optional)</span></label>
-            <input type="text" id="f-vehicle" name="vehicle" placeholder="e.g. BMW 3 Series, Audi Q5, Mercedes C200" autocomplete="off" />
-          </div>
-
-          <div class="f-grp">
-            <label for="f-msg">Message <span aria-hidden="true" style="color:var(--gold-dim)">*</span></label>
-            <textarea id="f-msg" name="message" placeholder="Tell us how we can help &mdash; describe your vehicle, the issue, or the service you need." required aria-required="true" aria-describedby="e-msg"></textarea>
-            <span class="f-err" id="e-msg" role="alert">Please enter a message.</span>
-          </div>
-
-          <div class="f-sub">
-            <button type="submit" class="btn btn-gold">Send Enquiry</button>
-          </div>
-
-          <div class="f-ok" id="fOk" role="status" aria-live="polite">
-            <p>Thank you for your enquiry. We will be in touch shortly.</p>
-          </div>
-
+          <p>
+            <label>Email <input type="email" name="email" /></label>
+          </p>
+          <p>
+            <button type="submit">Send</button>
+          </p>
         </form>
       </div>
 
