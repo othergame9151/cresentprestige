@@ -65,6 +65,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Cloudflare Turnstile bot protection -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
   <style>
     /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1330,7 +1332,7 @@
       </div>
 
       <div class="r d2">
-        <form name="contact" netlify class="enq-form" id="cForm" novalidate aria-label="Enquiry form">
+        <form class="enq-form" id="cForm" novalidate aria-label="Enquiry form">
           <div class="f-row">
             <div class="f-grp">
               <label for="f-name">Full Name <span aria-hidden="true" style="color:var(--gold-dim)">*</span></label>
@@ -1361,8 +1363,15 @@
             <span class="f-err" id="e-msg" role="alert">Please enter a message.</span>
           </div>
 
+          <!-- Honeypot — invisible to humans, bots fill it and get silently rejected -->
+          <div class="hp" aria-hidden="true">
+            <label>Leave this empty <input type="text" name="bot-field" id="bot-field" tabindex="-1" autocomplete="off" /></label>
+          </div>
+
           <div class="f-sub">
-            <button type="submit" class="btn btn-gold">Send Enquiry</button>
+            <!-- Turnstile widget — replace data-sitekey with YOUR site key from dash.cloudflare.com -->
+            <div class="cf-turnstile" data-sitekey="YOUR_TURNSTILE_SITE_KEY" data-theme="dark" style="margin-bottom:16px;"></div>
+            <button type="submit" class="btn btn-gold" id="fSubmit">Send Enquiry</button>
           </div>
 
           <div class="f-ok" id="fOk" role="status" aria-live="polite">
@@ -1507,11 +1516,12 @@
   });
 }());
 
-/* ── Contact form: validation + Netlify AJAX ── */
+/* ── Contact form: validation + Vercel API submit ── */
 (function(){
   var form=document.getElementById('cForm');
   var ok=document.getElementById('fOk');
-  if(!form)return;
+  var btn=document.getElementById('fSubmit');
+  if(!form||!ok||!btn)return;
   var re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   function g(id){return document.getElementById(id);}
@@ -1523,16 +1533,16 @@
   }
 
   function validate(){
-    var ok=true;
+    var valid=true;
     var name=g('f-name');
-    if(!name||!name.value.trim()){setErr('f-name','e-name',true);ok=false;}else{setErr('f-name','e-name',false);}
+    if(!name||!name.value.trim()){setErr('f-name','e-name',true);valid=false;}else{setErr('f-name','e-name',false);}
     var phone=g('f-phone');
-    if(!phone||!phone.value.trim()){setErr('f-phone','e-phone',true);ok=false;}else{setErr('f-phone','e-phone',false);}
+    if(!phone||!phone.value.trim()){setErr('f-phone','e-phone',true);valid=false;}else{setErr('f-phone','e-phone',false);}
     var email=g('f-email');
-    if(!email||!re.test(email.value.trim())){setErr('f-email','e-email',true);ok=false;}else{setErr('f-email','e-email',false);}
+    if(!email||!re.test(email.value.trim())){setErr('f-email','e-email',true);valid=false;}else{setErr('f-email','e-email',false);}
     var msg=g('f-msg');
-    if(!msg||!msg.value.trim()){setErr('f-msg','e-msg',true);ok=false;}else{setErr('f-msg','e-msg',false);}
-    return ok;
+    if(!msg||!msg.value.trim()){setErr('f-msg','e-msg',true);valid=false;}else{setErr('f-msg','e-msg',false);}
+    return valid;
   }
 
   /* Live blur validation */
@@ -1542,17 +1552,51 @@
     el.addEventListener('input',function(){if(el.classList.contains('err'))validate();});
   });
 
-  var form = document.getElementById('cForm');
-  var ok = document.getElementById('fOk');
-  
-  if (form && ok) {
-    form.addEventListener('submit', function() {
-      setTimeout(function() {
-        form.innerHTML = '';
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!validate())return;
+
+    /* Get Turnstile token — widget writes it to a hidden input automatically */
+    var turnstileEl=form.querySelector('[name="cf-turnstile-response"]');
+    var turnstileToken=turnstileEl?turnstileEl.value:'';
+
+    btn.disabled=true;
+    btn.textContent='Sending…';
+
+    var payload={
+      name:   g('f-name').value.trim(),
+      phone:  g('f-phone').value.trim(),
+      email:  g('f-email').value.trim(),
+      vehicle:g('f-vehicle')?g('f-vehicle').value.trim():'',
+      message:g('f-msg').value.trim(),
+      botField:g('bot-field')?g('bot-field').value:'',
+      'cf-turnstile-response':turnstileToken
+    };
+
+    fetch('/api/contact',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    })
+    .then(function(res){
+      if(res.ok){
+        /* Hide all form children except the success message */
+        Array.from(form.children).forEach(function(el){
+          if(el.id!=='fOk')el.style.display='none';
+        });
         ok.classList.add('show');
-      }, 300);
+      } else {
+        return res.json().then(function(data){
+          throw new Error(data.error||'Something went wrong.');
+        });
+      }
+    })
+    .catch(function(err){
+      btn.disabled=false;
+      btn.textContent='Send Enquiry';
+      alert(err.message||'Something went wrong. Please call us directly on (02) 9746 6533.');
     });
-  }
+  });
 }());
 </script>
 
