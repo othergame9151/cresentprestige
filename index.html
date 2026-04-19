@@ -711,8 +711,6 @@
       .trust-item:nth-child(4){border-bottom:none;}
     }
   </style>
-  <!-- Cloudflare Turnstile -->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -1328,11 +1326,19 @@
           class="enq-form"
           name="contact"
           method="POST"
-          action="https://formsubmit.co/jppj95693@gmail.com"
+          data-netlify="true"
+          data-netlify-honeypot="bot-field"
           id="cForm"
           novalidate
           aria-label="Enquiry form"
         >
+          <!-- Netlify required hidden field -->
+          <input type="hidden" name="form-name" value="contact" />
+
+          <!-- Honeypot — hidden from humans, catches spam bots -->
+          <p class="hp" aria-hidden="true">
+            <label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+          </p>
 
           <div class="f-row">
             <div class="f-grp">
@@ -1362,10 +1368,6 @@
             <label for="f-msg">Message <span aria-hidden="true" style="color:var(--gold-dim)">*</span></label>
             <textarea id="f-msg" name="message" placeholder="Tell us how we can help &mdash; describe your vehicle, the issue, or the service you need." required aria-required="true" aria-describedby="e-msg"></textarea>
             <span class="f-err" id="e-msg" role="alert">Please enter a message.</span>
-          </div>
-
-          <div class="f-grp" style="margin-top: 20px;">
-            <div class="cf-turnstile" data-sitekey="0x4AAAAAAC_ukqrirULQzMRi" data-theme="dark"></div>
           </div>
 
           <div class="f-sub">
@@ -1553,7 +1555,21 @@
   form.addEventListener('submit',function(e){
     e.preventDefault();
     if(!validate())return;
-    form.submit();
+    var data=new FormData(form);
+    fetch('/',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:new URLSearchParams(data).toString()
+    })
+    .then(function(res){
+      if(res.ok||res.redirected){
+        form.style.opacity='0';
+        form.style.pointerEvents='none';
+        ok.classList.add('show');
+        ok.scrollIntoView({behavior:'smooth',block:'center'});
+      }else{form.submit();}
+    })
+    .catch(function(){form.submit();});
   });
 }());
 </script>
